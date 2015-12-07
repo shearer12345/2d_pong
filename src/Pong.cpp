@@ -44,12 +44,14 @@ Pong::Pong(std::string windowName)
 	glViewport(0,0,600,600); //should check what the actual window res is?
 
 	GLSLProgram* glslProgram = new GLSLProgram();
+
 	Mesh* mesh = new Mesh(glslProgram);
 
-	Model* model = new Model(mesh, glm::vec3(-0.50f, 0.0f, 0.0f), glm::vec3(0.1f, 0.0f, 0.0f));
-	modelList.push_back(model);
+	Model* model1 = new Model(mesh, glm::vec3(-0.50f, 0.0f, 0.0f), glm::vec3(0.1f, 0.0f, 0.0f));
+	modelList.push_back(model1);
 
-	SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_DEBUG, "A Pong constructed");
+	Model* model2 = new Model(mesh, glm::vec3(0.00f, -0.5f, 0.0f), glm::vec3(0.0f, 0.2f, 0.0f));
+	modelList.push_back(model2);
 }
 
 Pong::~Pong()
@@ -183,8 +185,11 @@ void Pong::updateSimulation(double simLength) //update simulation with an amount
 	//WARNING - we should calculate an appropriate amount of time to simulate - not always use a constant amount of time
 			// see, for example, http://headerphile.blogspot.co.uk/2014/07/part-9-no-more-delays.html
 	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "running simulation for %f seconds", simLength);
-	modelList[0]->position += float(simLength) * modelList[0]->velocity;
-	//position2 += float(simLength) * velocity2;
+
+	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it) {
+		Model* model = *it;
+		model->position += float(simLength) * model->velocity;
+	}
 
 }
 // end::updateSimulation[]
@@ -192,7 +197,6 @@ void Pong::updateSimulation(double simLength) //update simulation with an amount
 // tag::preRender[]
 void Pong::preRender()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "Frame %i", frameCount++);
 	glViewport(0, 0, 600, 600); //set viewpoint
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); //set clear colour
 	glClear(GL_COLOR_BUFFER_BIT); //clear the window (technical the scissor box bounds)
@@ -202,7 +206,10 @@ void Pong::preRender()
 // tag::render[]
 void Pong::render()
 {
-	modelList[0]->draw();
+	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it) {
+		Model* model = *it;
+	    model->draw();
+	}
 
 
 }
@@ -211,7 +218,7 @@ void Pong::render()
 // tag::postRender[]
 void Pong::postRender()
 {
-	SDL_GL_SwapWindow(sdl_windowPtr);; //present the frame buffer to the display (swapBuffers)
+	SDL_GL_SwapWindow(sdl_windowPtr);; //present the frame buffer to the display (swapBuffers);
 }
 // end::postRender[]
 
@@ -220,6 +227,8 @@ void Pong::run()
 {
 	while (!done) //loop until done flag is set)
 	{
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Start %i", frameCount++);
+
 		handleInput(); // this should ONLY SET VARIABLES
 
 		updateSimulation(); // this should ONLY SET VARIABLES according to simulation
@@ -229,6 +238,8 @@ void Pong::run()
 		render(); // this should render the world state according to VARIABLES -
 
 		postRender();
+
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Done!\n\n");
 
 	}
 }

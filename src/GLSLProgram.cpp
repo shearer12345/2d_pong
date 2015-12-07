@@ -20,7 +20,6 @@ GLSLProgram::GLSLProgram(std::string newVertexShaderPath,
 	shaderList.push_back(createShader(GL_FRAGMENT_SHADER, loadShader(fragmentShaderPath)));
 
 	programID = createProgram(shaderList);
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "in constructor, programID %i", programID);
 
 	//clean up shaders (we don't need them anymore as they are not in theProgram
 	for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
@@ -52,14 +51,13 @@ GLSLProgram::GLSLProgram(std::string newVertexShaderPath,
 // tag::~GLSLProgram[]
 GLSLProgram::~GLSLProgram()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "GLSL program deletion OK!");
 	glDeleteProgram(programID);
 }
 // end::~GLSLProgram[]
 
 void GLSLProgram::use()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "Using GLSL program with ID %i", programID);
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "Using GLSL program with ID %i", programID);
 	glUseProgram(programID);
 }
 // tag::createShader[]
