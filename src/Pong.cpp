@@ -43,15 +43,31 @@ Pong::Pong(std::string windowName)
 
 	glViewport(0,0,600,600); //should check what the actual window res is?
 
-	GLSLProgram* glslProgram = new GLSLProgram();
+	glslProgram = new GLSLProgram();
 
-	Mesh* mesh = new Mesh(glslProgram);
+	Mesh* mesh = new Mesh(glslProgram,   std::vector<Vertex> {
+			Vertex(   glm::vec3( 0.000f,  0.500f,  0.000f),  glm::vec4(1.0f, 0.0f, 0.0f,  1.0f) ),
+			Vertex(   glm::vec3(-0.433f, -0.250f,  0.000f),  glm::vec4(0.0f, 1.0f, 0.0f,  1.0f) ),
+			Vertex(   glm::vec3( 0.433f, -0.250f,  0.000f),  glm::vec4(0.0f, 0.0f, 1.0f,  1.0f) ) });
+
+	Mesh* mesh2 = new Mesh(glslProgram,   std::vector<Vertex> {
+			Vertex(   glm::vec3( 0.000f,  0.500f,  0.000f),  glm::vec4(1.0f, 0.0f, 0.0f,  1.0f) ),
+			Vertex(   glm::vec3(-0.433f, -0.250f,  0.000f),  glm::vec4(0.0f, 1.0f, 0.0f,  1.0f) ),
+			Vertex(   glm::vec3( 0.433f, -0.250f,  0.000f),  glm::vec4(1.0f, 0.0f, 1.0f,  1.0f) ) });
+
 
 	Model* model1 = new Model(mesh, glm::vec3(-0.50f, 0.0f, 0.0f), glm::vec3(0.1f, 0.0f, 0.0f));
 	modelList.push_back(model1);
 
-	Model* model2 = new Model(mesh, glm::vec3(0.00f, -0.5f, 0.0f), glm::vec3(0.0f, 0.2f, 0.0f));
+	Model* model2 = new Model(mesh2, glm::vec3(0.00f, -0.5f, 0.0f), glm::vec3(0.0f, 0.2f, 0.0f));
 	modelList.push_back(model2);
+
+	//PerspectiveCamera* camara1 = new PerspectiveCamera(glslProgram);
+	PerspectiveCamera* camara2 = new PerspectiveCamera(glslProgram, 	glm::vec3(0.0f, 0.0f, 1.0f),
+												glm::vec3(0.5f, 0.0f, -1.0f),
+												glm::vec3(0.0f, 1.0f, 0.0f));
+	//PerspectiveCameraList.push_back(camara1);
+	PerspectiveCameraList.push_back(camara2);
 }
 
 Pong::~Pong()
@@ -128,9 +144,6 @@ void Pong::initGlew()
 }
 // end::initGlew[]
 
-
-
-
 // tag::handleInput[]
 void Pong::handleInput()
 {
@@ -186,9 +199,11 @@ void Pong::updateSimulation(double simLength) //update simulation with an amount
 			// see, for example, http://headerphile.blogspot.co.uk/2014/07/part-9-no-more-delays.html
 	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "running simulation for %f seconds", simLength);
 
-	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it) {
+	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it)
+	{
 		Model* model = *it;
 		model->position += float(simLength) * model->velocity;
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "model->position: %f, %f, %f", model->position.x, model->position.y, model->position.z);
 	}
 
 }
@@ -206,9 +221,18 @@ void Pong::preRender()
 // tag::render[]
 void Pong::render()
 {
-	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it) {
-		Model* model = *it;
-	    model->draw();
+	glslProgram->use();
+
+	for(std::vector<PerspectiveCamera*>::iterator it = PerspectiveCameraList.begin(); it != PerspectiveCameraList.end(); ++it)
+	{
+		PerspectiveCamera* PerspectiveCamera = *it;
+		PerspectiveCamera->activate();
+
+		for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it)
+		{
+			Model* model = *it;
+			model->draw();
+		}
 	}
 
 
@@ -227,19 +251,23 @@ void Pong::run()
 {
 	while (!done) //loop until done flag is set)
 	{
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Start %i", frameCount++);
-
-		handleInput(); // this should ONLY SET VARIABLES
-
-		updateSimulation(); // this should ONLY SET VARIABLES according to simulation
-
-		preRender();
-
-		render(); // this should render the world state according to VARIABLES -
-
-		postRender();
-
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Done!\n\n");
-
+		run_once();
 	}
+}
+
+void Pong::run_once()
+{
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Start %i", frameCount++);
+
+	handleInput(); // this should ONLY SET VARIABLES
+
+	updateSimulation(); // this should ONLY SET VARIABLES according to simulation
+
+	preRender();
+
+	render(); // this should render the world state according to VARIABLES -
+
+	postRender();
+
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Done!\n\n");
 }

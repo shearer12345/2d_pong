@@ -22,11 +22,19 @@ int main( int argc, char* args[] )
 	int beginIdx = std::max(beginIdxWindows, beginIdxLinux);
 	std::string exeNameEnd = exeName.substr(beginIdx + 1);
 
-	std::cout << "before making a pong" << std::endl;
-
 	Pong pong = Pong(exeNameEnd);
-	std::cout << "after making a pong" << std::endl;
-	pong.run();
-	std::cout << "after running a pong" << std::endl;
+	std::cout << argc;
+	if (argc > 1)
+	{
+		pong.run_once();
+
+		std::cout << "Press Enter";
+		std::cin.get() ;
+	}
+	else
+	{
+		pong.run();
+	}
+
 
 }

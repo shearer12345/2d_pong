@@ -8,6 +8,7 @@
 #include "GLSLProgram.hpp"
 #include "Mesh.hpp"
 #include "Model.hpp"
+#include "PerspectiveCamera.hpp"
 
 class Pong {
 public:
@@ -17,15 +18,19 @@ public:
 
     int frameCount = 0;
     std::string frameLine = "";
-
-    std::vector<Model*> modelList;
-
     bool done = false;
+
+    GLSLProgram* glslProgram = nullptr;
+    std::vector<Model*> modelList;
+    std::vector<PerspectiveCamera*> PerspectiveCameraList;
+
+
 
     Pong(std::string windowName = "Pong");
     ~Pong();
 
     void run();
+    void run_once();
 
 private:
     void createWindow();
