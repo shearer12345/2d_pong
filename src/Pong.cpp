@@ -59,15 +59,20 @@ Pong::Pong(std::string windowName)
 	Model* model1 = new Model(mesh, glm::vec3(-0.50f, 0.0f, 0.0f), glm::vec3(0.1f, 0.0f, 0.0f));
 	modelList.push_back(model1);
 
-	Model* model2 = new Model(mesh2, glm::vec3(0.00f, -0.5f, 0.0f), glm::vec3(0.0f, 0.2f, 0.0f));
+	Model* model2 = new Model(mesh2, glm::vec3(0.00f, -0.5f, 0.0f), glm::vec3(0.0f, 1.2f, 0.0f));
 	modelList.push_back(model2);
 
-	//PerspectiveCamera* camara1 = new PerspectiveCamera(glslProgram);
-	PerspectiveCamera* camara2 = new PerspectiveCamera(glslProgram, 	glm::vec3(0.0f, 0.0f, 1.0f),
-												glm::vec3(0.5f, 0.0f, -1.0f),
-												glm::vec3(0.0f, 1.0f, 0.0f));
-	//PerspectiveCameraList.push_back(camara1);
-	PerspectiveCameraList.push_back(camara2);
+	// Camera* camara = new PerspectiveCamera(glslProgram,
+	// 											glm::vec3(0.0f, 0.0f, 1.0f),
+	// 											glm::vec3(0.5f, 0.0f, -1.0f),
+	// 											glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm::vec3* tmp = new glm::vec3(1.0f, 1.0f, 0.0f);
+	TrackingOrthoCamera* camera = new TrackingOrthoCamera(glslProgram, &model1->position);
+	//camera->size = glm::vec2(5.0f);
+
+
+	cameraList.push_back(camera);
 }
 
 Pong::~Pong()
@@ -223,10 +228,10 @@ void Pong::render()
 {
 	glslProgram->use();
 
-	for(std::vector<PerspectiveCamera*>::iterator it = PerspectiveCameraList.begin(); it != PerspectiveCameraList.end(); ++it)
+	for(std::vector<Camera*>::iterator it = cameraList.begin(); it != cameraList.end(); ++it)
 	{
-		PerspectiveCamera* PerspectiveCamera = *it;
-		PerspectiveCamera->activate();
+		Camera* camera = *it;
+		camera->activate();
 
 		for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it)
 		{

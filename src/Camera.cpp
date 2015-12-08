@@ -1,8 +1,9 @@
 #include "Camera.hpp"
 
-Camera::Camera(GLSLProgram* glslProgram)
+Camera::Camera(GLSLProgram* glslProgram, glm::vec3 position)
                 :
-                glslProgram(glslProgram)
+                glslProgram(glslProgram),
+                position(position)
 {
 
 }

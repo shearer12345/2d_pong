@@ -8,6 +8,8 @@
 #include "GLSLProgram.hpp"
 #include "Mesh.hpp"
 #include "Model.hpp"
+#include "OrthoCamera.hpp"
+#include "TrackingOrthoCamera.hpp"
 #include "PerspectiveCamera.hpp"
 
 class Pong {
@@ -22,7 +24,7 @@ public:
 
     GLSLProgram* glslProgram = nullptr;
     std::vector<Model*> modelList;
-    std::vector<PerspectiveCamera*> PerspectiveCameraList;
+    std::vector<Camera*> cameraList;
 
 
 

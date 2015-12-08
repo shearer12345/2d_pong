@@ -7,8 +7,7 @@ PerspectiveCamera::PerspectiveCamera (GLSLProgram* glslProgram,
                 glm::vec3 lookat,
                 glm::vec3 upVector)
                 : // initializer list follows
-                Camera(glslProgram),
-                position(position),
+                Camera::Camera(glslProgram, position),
                 lookat(lookat),
                 upVector(upVector)
 {
@@ -17,6 +16,7 @@ PerspectiveCamera::PerspectiveCamera (GLSLProgram* glslProgram,
 
 void PerspectiveCamera::activate()
 {
+    std::cout << "PerspectiveCamera activated" << std::endl;
     //set projectionMatrix - how we go from 3D to 2D
     glm::mat4 projectionMatrix = glm::perspective(fovy, aspect, zNear, zFar);
     glUniformMatrix4fv(glslProgram->projectionMatrixLocation, 1, false, glm::value_ptr(projectionMatrix));

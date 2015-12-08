@@ -2,13 +2,11 @@
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
-#include <glm/glm.hpp>
 #include "Camera.hpp"
 
 class PerspectiveCamera : public Camera {
 public:
 
-    glm::vec3 position;
     glm::vec3 lookat;
     glm::vec3 upVector;
 
@@ -23,5 +21,5 @@ public:
           glm::vec3 upVector = glm::vec3(0.0f, 1.0f, 0.0f)
             );
 
-    void activate();
+    void activate() override;
 };
