@@ -12,7 +12,6 @@
 #include "AABB.hpp"
 #include "OrthoCamera.hpp"
 #include "TrackingOrthoCamera.hpp"
-#include "PerspectiveCamera.hpp"
 
 class Pong : public Game {
 public:
