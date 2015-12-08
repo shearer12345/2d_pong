@@ -1,8 +1,8 @@
 #include "TrackingOrthoCamera.hpp"
 
-TrackingOrthoCamera::TrackingOrthoCamera(GLSLProgram* glslProgram, glm::vec3* target, glm::vec2 size)
+TrackingOrthoCamera::TrackingOrthoCamera(GLSLProgram* glslProgram, Model* target, glm::vec2 size)
                 :
-                OrthoCamera::OrthoCamera(glslProgram, *target, size),
+                OrthoCamera::OrthoCamera(glslProgram, target->position, size),
                 target(target)
 {
 
@@ -10,8 +10,8 @@ TrackingOrthoCamera::TrackingOrthoCamera(GLSLProgram* glslProgram, glm::vec3* ta
 
 void TrackingOrthoCamera::activate()
 {
-    position = *target;
-    SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "TrackingOrthoCamera activated. Target is %f,%f", target->x, target->y);
+    position = target->position;
+    SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  trackingOrthoCamera activated. Target is %s, at %f,%f", target->name.c_str(), position.x, position.y);
 
     //set projectionMatrix - how we go from 3D to 2D
     glm::vec2 halfSize = size / 2.0f;

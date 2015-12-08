@@ -1,66 +1,30 @@
 #include "Pong.hpp"
 
-// tag::includes[]
-#include <iostream>
-
-#include <iterator>
-#include <vector>
-
-
-#include <SDL2/SDL_log.h>
-
-#define GLM_FORCE_RADIANS // suppress a warning in GLM 0.9.5
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 Pong::Pong(std::string windowName)
 			:
-			windowName(windowName)
+			Game::Game(windowName)
 {
-	int init = SDL_Init(SDL_INIT_EVERYTHING);
-
-	#ifdef NDEBUG
-		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
-	#else
-		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
-	#endif
-
-	// error handling
-	if (init != 0)
-	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_SYSTEM, "SDL initialisation failed!");
-		SDL_Quit();
-	}
-
-	SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_INFO, "SDL initialised OK!");
-
-	createWindow();
-
-	createContext();
-
-	initGlew();
-
-	glViewport(0,0,600,600); //should check what the actual window res is?
-
 	glslProgram = new GLSLProgram();
 
-	Mesh* mesh = new Mesh(glslProgram,   std::vector<Vertex> {
-			Vertex(   glm::vec3( 0.000f,  0.500f,  0.000f),  glm::vec4(1.0f, 0.0f, 0.0f,  1.0f) ),
-			Vertex(   glm::vec3(-0.433f, -0.250f,  0.000f),  glm::vec4(0.0f, 1.0f, 0.0f,  1.0f) ),
-			Vertex(   glm::vec3( 0.433f, -0.250f,  0.000f),  glm::vec4(0.0f, 0.0f, 1.0f,  1.0f) ) });
 
-	Mesh* mesh2 = new Mesh(glslProgram,   std::vector<Vertex> {
-			Vertex(   glm::vec3( 0.000f,  0.500f,  0.000f),  glm::vec4(1.0f, 0.0f, 0.0f,  1.0f) ),
-			Vertex(   glm::vec3(-0.433f, -0.250f,  0.000f),  glm::vec4(0.0f, 1.0f, 0.0f,  1.0f) ),
-			Vertex(   glm::vec3( 0.433f, -0.250f,  0.000f),  glm::vec4(1.0f, 0.0f, 1.0f,  1.0f) ) });
+	Mesh* quad = new Quad(glslProgram);
+
+	Mesh* triangle = new Triangle(glslProgram);
 
 
-	Model* model1 = new Model(mesh, glm::vec3(-0.50f, 0.0f, 0.0f), glm::vec3(0.1f, 0.0f, 0.0f));
-	modelList.push_back(model1);
+	Model* batLeft = new Model("batLeft", quad, glm::vec3(-80.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	batLeft->scale = (glm::vec3(2.0f, 10.0f, 1.0f));
+	modelList.push_back(batLeft);
 
-	Model* model2 = new Model(mesh2, glm::vec3(0.00f, -0.5f, 0.0f), glm::vec3(0.0f, 1.2f, 0.0f));
+	Model* batRight = new Model("batRight", quad, glm::vec3(80.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	batRight->scale = (glm::vec3(2.0f, 10.0f, 1.0f));
+	modelList.push_back(batRight);
+
+	Model* model2 = new Model("quad2", quad, glm::vec3(0.00f, -5.0f, 0.0f), glm::vec3(0.0f, 5.0f, 0.0f));
 	modelList.push_back(model2);
+
+	Model* model3 = new Model("triangle1", triangle, glm::vec3(25.50f, 0.0f, 0.0f), glm::vec3(-5.0f, 0.0f, 0.0f));
+	modelList.push_back(model3);
 
 	// Camera* camara = new PerspectiveCamera(glslProgram,
 	// 											glm::vec3(0.0f, 0.0f, 1.0f),
@@ -68,164 +32,62 @@ Pong::Pong(std::string windowName)
 	// 											glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm::vec3* tmp = new glm::vec3(1.0f, 1.0f, 0.0f);
-	TrackingOrthoCamera* camera = new TrackingOrthoCamera(glslProgram, &model1->position);
-	//camera->size = glm::vec2(5.0f);
+	TrackingOrthoCamera* trackingCamera = new TrackingOrthoCamera(glslProgram, model2, glm::vec2(200.0f));
+	OrthoCamera* orthoCamera = new OrthoCamera(glslProgram, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(200.0f));
 
 
-	cameraList.push_back(camera);
+	cameraList.push_back(orthoCamera);
 }
 
 Pong::~Pong()
 {
-	SDL_GL_DeleteContext(context);
-	SDL_DestroyWindow(sdl_windowPtr);
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "SDL Clean up OK!");
 
-	SDL_Quit();
 }
-
-// tag::createWindow[]
-void Pong::createWindow()
-{
-	//create window
-	sdl_windowPtr = SDL_CreateWindow(windowName.c_str(), 100, 100, 600, 600, SDL_WINDOW_OPENGL); //same height and width makes the window square ...
-
-	//error handling
-	if(sdl_windowPtr == nullptr)
-	{
-		SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_CRITICAL, "SDL Window Creation failed!");
-		SDL_Quit();
-	}
-
-	SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_INFO, "SDL CreatedWindow OK!");
-}
-// end::createWindow[]
-
-// tag::setGLAttributes[]
-void Pong::setGLAttributes()
-{
-	int major = 3;
-	int minor = 3;
-	SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_INFO, "Built for OpenGL Version %i.%i", major, minor); //https://en.wikipedia.org/wiki/OpenGL_Shading_Language#Versions
-	// set the opengl context version
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, major);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE); //core profile
-	SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_INFO, "SDL Set OpenGL context to version %i.%i ", major, minor);
-}
-// tag::setGLAttributes[]
-
-// tag::createContext[]
-void Pong::createContext()
-{
-	setGLAttributes();
-	context = SDL_GL_CreateContext(sdl_windowPtr);
-
-	//error handling
-
-	if (context == NULL)
-	{
-		SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_CRITICAL, "SDL OpenGL Context Creation failed!");
-		SDL_Quit();
-	}
-
-	SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_INFO, "SDL Created OpenGL context OK!");
-}
-// end::createContext[]
-
-// tag::initGlew[]
-void Pong::initGlew()
-{
-	glewExperimental = GL_TRUE; //GLEW isn't perfect - see https://www.opengl.org/wiki/OpenGL_Loading_Library#GLEW
-	const GLenum rev = glewInit();
-
-	//error handling
-	if (GLEW_OK != rev){
-		SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_CRITICAL, "GLEW Error: %s", glewGetErrorString(rev));
-		SDL_Quit();
-	}
-
-	SDL_LogMessage(SDL_LOG_CATEGORY_SYSTEM, SDL_LOG_PRIORITY_INFO, "GLEW Init OK!");
-}
-// end::initGlew[]
-
-// tag::handleInput[]
-void Pong::handleInput()
-{
-	//Event-based input handling
-	//The underlying OS is event-based, so **each** key-up or key-down (for example)
-	//generates an event.
-	//  - https://wiki.libsdl.org/SDL_PollEvent
-	//In some scenarios we want to catch **ALL** the events, not just to present state
-	//  - for instance, if taking keyboard input the user might key-down two keys during a frame
-	//    - we want to catch based, and know the order
-	//  - or the user might key-down and key-up the same within a frame, and we still want something to happen (e.g. jump)
-	//  - the alternative is to Poll the current state with SDL_GetKeyboardState
-
-	SDL_Event event; //somewhere to store an event
-
-	//NOTE: there may be multiple events per frame
-	while (SDL_PollEvent(&event)) //loop until SDL_PollEvent returns 0 (meaning no more events)
-	{
-		switch (event.type)
-		{
-		case SDL_QUIT:
-			done = true; //set donecreate remote branch flag if SDL wants to quit (i.e. if the OS has triggered a close event,
-							//  - such as window close, or SIGINT
-			break;
-
-			//keydown handling - we should to the opposite on key-up for direction controls (generally)
-		case SDL_KEYDOWN:
-			//Keydown can fire repeatable if key-repeat is on.
-			//  - the repeat flag is set on the keyboard event, if this is a repeat event
-			//  - in our case, we're going to ignore repeat events
-			//  - https://wiki.libsdl.org/SDL_KeyboardEvent
-			if (!event.key.repeat)
-				switch (event.key.keysym.sym)
-				{
-					//hit escape to exit
-					case SDLK_ESCAPE:
-					{
-						SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "Escape key pressed");
-						done = true;
-					}
-					break;
-				}
-			break;
-		}
-	}
-}
-// end::handleInput[]
 
 // tag::updateSimulation[]
 void Pong::updateSimulation(double simLength) //update simulation with an amount of time to simulate for (in seconds)
 {
-	//WARNING - we should calculate an appropriate amount of time to simulate - not always use a constant amount of time
-			// see, for example, http://headerphile.blogspot.co.uk/2014/07/part-9-no-more-delays.html
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "running simulation for %f seconds", simLength);
+	Game::updateSimulation(simLength);
 
+	// collision detection
+	for(std::vector<Model*>::iterator it2 = modelList.begin(); it2 != modelList.end(); ++it2)
+	{
+		Model* model2 = *it2;
+		for(std::vector<Model*>::iterator it1 = modelList.begin(); it1 != modelList.end(); ++it1)
+		{
+			Model* model1 = *it1;
+			if (it1==it2) break;
+
+			bool intersection = Model::intersects(model1, model2);
+			SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "Testing for collision between %s and %s", model1->name.c_str(), model2->name.c_str());
+			if (intersection)
+			{
+				SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "Collision between %s and %s", model1->name.c_str(), model2->name.c_str());
+				model1->setVelocity(model1->getVelocity() * -1.0f);
+				model2->setVelocity(model2->getVelocity() * -1.0f);
+			}
+
+
+		}
+	}
+
+
+	// update Positions from Velocities
 	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it)
 	{
 		Model* model = *it;
-		model->position += float(simLength) * model->velocity;
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "model->position: %f, %f, %f", model->position.x, model->position.y, model->position.z);
+		model->position += float(simLength) * model->getVelocity();
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  %s->position: %f, %f, %f", model->name.c_str(), model->position.x, model->position.y, model->position.z);
 	}
 
 }
 // end::updateSimulation[]
 
-// tag::preRender[]
-void Pong::preRender()
-{
-	glViewport(0, 0, 600, 600); //set viewpoint
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); //set clear colour
-	glClear(GL_COLOR_BUFFER_BIT); //clear the window (technical the scissor box bounds)
-}
-// end::preRender[]
-
 // tag::render[]
 void Pong::render()
 {
+	Game::render();
+
 	glslProgram->use();
 
 	for(std::vector<Camera*>::iterator it = cameraList.begin(); it != cameraList.end(); ++it)
@@ -243,36 +105,3 @@ void Pong::render()
 
 }
 // end::render[]
-
-// tag::postRender[]
-void Pong::postRender()
-{
-	SDL_GL_SwapWindow(sdl_windowPtr);; //present the frame buffer to the display (swapBuffers);
-}
-// end::postRender[]
-
-
-void Pong::run()
-{
-	while (!done) //loop until done flag is set)
-	{
-		run_once();
-	}
-}
-
-void Pong::run_once()
-{
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Start %i", frameCount++);
-
-	handleInput(); // this should ONLY SET VARIABLES
-
-	updateSimulation(); // this should ONLY SET VARIABLES according to simulation
-
-	preRender();
-
-	render(); // this should render the world state according to VARIABLES -
-
-	postRender();
-
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_INFO, "=== Frame Done!\n\n");
-}
