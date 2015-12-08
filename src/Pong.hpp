@@ -19,18 +19,33 @@ public:
 
     GLSLProgram* glslProgram = nullptr;
     std::vector<Model*> modelList;
-    std::vector<Camera*> cameraList;
+    std::vector<Model*> scoreMarkerList;
 
+    OrthoCamera * orthoCamera = nullptr;
+    TrackingOrthoCamera * trackingCamera = nullptr;
+    Camera * camera = orthoCamera;
+
+    Mesh* quad = nullptr;
+    Mesh * triangle = nullptr;
+
+    Model* ball = nullptr;
     Model* batLeft = nullptr;
     Model* batRight = nullptr;
+    Model* wallLeft = nullptr;
+    Model* wallRight = nullptr;
 
-    GLfloat batSpeed = 50.0f;
+    GLfloat batSpeed = 100.0f;
 
+    glm::ivec2 score = glm::vec2(0);
     Pong(std::string windowName = "Pong");
     ~Pong();
 
 protected:
+    const int scoreLimit = 5;
     void updateSimulation(double simLength = 0.02) override;
     void render() override;
     void handleInput() override;
+    void handleBallCollision(Model * other);
+    void handleBatCollision(Model * bat, Model * other);
+    void incrementScore(int player);
 };

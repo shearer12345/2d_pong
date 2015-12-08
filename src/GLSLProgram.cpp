@@ -142,7 +142,7 @@ std::string GLSLProgram::loadShader(const std::string filePath) {
 	//error handling
 	if (!fileStream)
 	{
-		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_ERROR, "GLSL Shader could not be loaded - cannot read file - %s", filePath);
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_ERROR, "GLSL Shader could not be loaded - cannot read file - %s", filePath.c_str());
         SDL_Quit();
 	}
 

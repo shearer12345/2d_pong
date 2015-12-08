@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_FORCE_RADIANS // suppress a warning in GLM 0.9.5
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>

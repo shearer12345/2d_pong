@@ -7,9 +7,9 @@ Pong::Pong(std::string windowName)
 	glslProgram = new GLSLProgram();
 
 
-	Mesh* quad = new Quad(glslProgram);
+	quad = new Quad(glslProgram);
 
-	Mesh* triangle = new Triangle(glslProgram);
+	triangle = new Triangle(glslProgram);
 
 
 	batLeft = new Model("batLeft", quad, glm::vec3(-80.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -21,11 +21,11 @@ Pong::Pong(std::string windowName)
 	modelList.push_back(batRight);
 
 
-	Model* wallLeft = new Model("wallLeft", quad, glm::vec3(-100.00f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	wallLeft = new Model("wallLeft", quad, glm::vec3(-100.00f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
 	wallLeft->scale = (glm::vec3(5.0f, 100.0f, 1.0f));
 	modelList.push_back(wallLeft);
 
-	Model* wallRight = new Model("wallRight", quad, glm::vec3(100.00f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	wallRight = new Model("wallRight", quad, glm::vec3(100.00f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
 	wallRight->scale = (glm::vec3(5.0f, 100.0f, 1.0f));
 	modelList.push_back(wallRight);
 
@@ -40,22 +40,15 @@ Pong::Pong(std::string windowName)
 	modelList.push_back(wallBottom);
 
 
-	Model* ball = new Model("ball", triangle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-50.0f, 20.0f, 0.0f));
+	ball = new Model("ball", triangle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-50.0f, 20.0f, 0.0f));
 	ball->scale = (glm::vec3(15.0f, 15.0f, 1.0f));
 	ball->angleVelocityDegs = 55.0f;
 	modelList.push_back(ball);
 
-	// Camera* camara = new PerspectiveCamera(glslProgram,
-	// 											glm::vec3(0.0f, 0.0f, 1.0f),
-	// 											glm::vec3(0.5f, 0.0f, -1.0f),
-	// 											glm::vec3(0.0f, 1.0f, 0.0f));
-
 	glm::vec3* tmp = new glm::vec3(1.0f, 1.0f, 0.0f);
-	TrackingOrthoCamera* trackingCamera = new TrackingOrthoCamera(glslProgram, ball, glm::vec2(200.0f));
-	OrthoCamera* orthoCamera = new OrthoCamera(glslProgram, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(200.0f));
-
-
-	cameraList.push_back(orthoCamera);
+	trackingCamera = new TrackingOrthoCamera(glslProgram, ball, glm::vec2(200.0f));
+	orthoCamera = new OrthoCamera(glslProgram, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(200.0f));
+	camera = orthoCamera;
 }
 
 Pong::~Pong()
@@ -70,23 +63,45 @@ void Pong::render()
 
 	glslProgram->use();
 
-	for(std::vector<Camera*>::iterator it = cameraList.begin(); it != cameraList.end(); ++it)
-	{
-		Camera* camera = *it;
-		camera->activate();
+	camera->activate();
 
-		for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it)
-		{
-			Model* model = *it;
-			model->draw();
-		}
+	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it)
+	{
+		Model* model = *it;
+		model->draw();
 	}
+
+	orthoCamera->activate();
+	for(std::vector<Model*>::iterator it = scoreMarkerList.begin(); it != scoreMarkerList.end(); ++it)
+	{
+		Model* model = *it;
+		model->draw();
+	}
+
 
 
 }
 // end::render[]
 
-void handleBallCollision(Model * ball, Model * other)
+void Pong::incrementScore(int player)
+{
+	score[player]++;
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  incrementScore for player %d", player);
+
+	GLfloat direction = (player == 0) ? -1.0f : 1.0f;
+	Model * scoreMarker = new Model("scoreMarker", triangle, glm::vec3(direction * 8 * (9 - score[player]), -80.0f, 0.0f), glm::vec3(0.0f, 20.0f, 0.0f), false);
+	scoreMarker->scale = (glm::vec3(5.0f, 5.0f, 1.0f));
+	scoreMarker->angleVelocityDegs = 95.0f;
+	scoreMarkerList.push_back(scoreMarker);
+
+	if (score[0] >= scoreLimit || score[1] >= scoreLimit)
+	{
+			SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  SCORE LIMIT HIT!");
+			done = true;
+	}
+}
+
+void Pong::handleBallCollision(Model * other)
 {
 	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  Ball Collision with %s", other->name.c_str());
 
@@ -95,9 +110,37 @@ void handleBallCollision(Model * ball, Model * other)
 	vel[other->bounceAxis] *= -1.0f;
 
 	ball->setVelocity(vel);
+
+	if (other == wallLeft)
+	{
+		ball->position = glm::vec3(0.0f);
+		incrementScore(1);
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  Hit wallLeft. Score now %d:%d", score[0], score[1]);
+	}
+	else if (other == wallRight)
+	{
+		ball->position = glm::vec3(0.0f);
+		incrementScore(0);
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  Hit wallRight. Score now %d:%d", score[0], score[1]);
+	}
+
 	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  Ball Collision complete");
 }
 
+
+void Pong::handleBatCollision(Model * bat, Model * other)
+{
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  Bat Collision with %s", other->name.c_str());
+	if (other != ball)
+	{
+		glm::vec3 vel = bat->getVelocity();
+
+		vel.y *= -1.0f;
+
+		bat->setVelocity(vel);
+	}
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  Bat Collision complete");
+}
 // tag::updateSimulation[]
 void Pong::updateSimulation(double simLength) //update simulation with an amount of time to simulate for (in seconds)
 {
@@ -111,22 +154,41 @@ void Pong::updateSimulation(double simLength) //update simulation with an amount
 		{
 			Model* model1 = *it1;
 			if (it1==it2) break;
+			if (model1->name == model2->name) break;
 
 			SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "Testing for collision between %s and %s", model1->name.c_str(), model2->name.c_str());
 			bool intersection = Model::intersects(model1, model2);
 			if (intersection)
 			{
-				Model * ballPtr = nullptr;
-				Model * other = nullptr;
-				if (model1->name == "ball") handleBallCollision(model1, model2);
-				else if (model2->name == "ball") handleBallCollision(model2, model1);
+				if (model1 == ball) handleBallCollision(model2);
+				else if (model2 == ball) handleBallCollision(model1);
+
+				if (model1 == batLeft) handleBatCollision(batLeft, model2);
+				else if (model2 == batLeft) handleBatCollision(batLeft, model1);
+
+				if (model1 == batRight) handleBatCollision(batRight, model2);
+				else if (model2 == batRight) handleBatCollision(batRight, model1);
+
 			}
 		}
 	}
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "Collision Detection Complete");
 
 
 	// update Positions and angle from Velocities and angular velocities
 	for(std::vector<Model*>::iterator it = modelList.begin(); it != modelList.end(); ++it)
+	{
+		Model* model = *it;
+		model->position += float(simLength) * model->getVelocity();
+		model->angleDegs += float(simLength) * model->angleVelocityDegs;
+
+		glm::vec3 vel = model->getVelocity();
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "  %s->velocity: %f, %f, %f", model->name.c_str(), vel.x, vel.y, vel.z);
+		SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "  %s->position: %f, %f, %f", model->name.c_str(), model->position.x, model->position.y, model->position.z);
+	}
+
+	// update Positions and angle from Velocities and angular velocities
+	for(std::vector<Model*>::iterator it = scoreMarkerList.begin(); it != scoreMarkerList.end(); ++it)
 	{
 		Model* model = *it;
 		model->position += float(simLength) * model->getVelocity();
@@ -143,7 +205,7 @@ void Pong::updateSimulation(double simLength) //update simulation with an amount
 
 void Pong::handleInput()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "handleInput");
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "handleInput");
 	//Event-based input handling
 	//The underlying OS is event-based, so **each** key-up or key-down (for example)
 	//generates an event.

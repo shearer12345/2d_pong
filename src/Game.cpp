@@ -23,7 +23,7 @@ Game::Game(std::string windowName)
 	#ifdef NDEBUG
 		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 	#else
-		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
+		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 	#endif
 
 	// error handling
@@ -121,7 +121,7 @@ void Game::initGlew()
 // tag::handleInput[]
 void Game::handleInput()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "handleInput");
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "handleInput");
 	//Event-based input handling
 	//The underlying OS is event-based, so **each** key-up or key-down (for example)
 	//generates an event.
@@ -172,7 +172,7 @@ void Game::updateSimulation(double simLength) //update simulation with an amount
 {
 	//WARNING - we should calculate an appropriate amount of time to simulate - not always use a constant amount of time
 			// see, for example, http://headerphile.blogspot.co.uk/2014/07/part-9-no-more-delays.html
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "updateSimulation (for %f seconds)", simLength);
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "updateSimulation (for %f seconds)", simLength);
 
 }
 // end::updateSimulation[]
@@ -180,7 +180,7 @@ void Game::updateSimulation(double simLength) //update simulation with an amount
 // tag::preRender[]
 void Game::preRender()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "preRender");
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "preRender");
 	glViewport(0, 0, 600, 600); //set viewpoint
 	glClearColor(1.0f, 0.0f, 0.0f, 1.0f); //set clear colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the window (technical the scissor box bounds)
@@ -190,14 +190,14 @@ void Game::preRender()
 // tag::render[]
 void Game::render()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "render");
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "render");
 }
 // end::render[]
 
 // tag::postRender[]
 void Game::postRender()
 {
-	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "postRender");
+	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "postRender");
 	SDL_GL_SwapWindow(sdl_windowPtr);; //present the frame buffer to the display (swapBuffers);
 }
 // end::postRender[]

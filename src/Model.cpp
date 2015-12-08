@@ -23,7 +23,7 @@ Model::Model(std::string name,
 void Model::setVelocity(glm::vec3 velocity)
 {
     if (moveable){
-        SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "Model velocity set on %s to %f,%f,%f", name.c_str(), velocity.x, velocity.y, velocity.z);
+        SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "Model velocity set on %s to %f,%f,%f", name.c_str(), velocity.x, velocity.y, velocity.z);
         _velocity = velocity;
     }
 
