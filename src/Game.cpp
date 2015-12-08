@@ -57,7 +57,7 @@ Game::~Game()
 void Game::createWindow()
 {
 	//create window
-	sdl_windowPtr = SDL_CreateWindow(windowName.c_str(), 100, 100, 600, 600, SDL_WINDOW_OPENGL); //same height and width makes the window square ...
+	sdl_windowPtr = SDL_CreateWindow(windowName.c_str(), 100, 600, 600, 600, SDL_WINDOW_OPENGL); //same height and width makes the window square ...
 
 	//error handling
 	if(sdl_windowPtr == nullptr)

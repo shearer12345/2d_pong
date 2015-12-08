@@ -16,12 +16,16 @@ public:
     glm::vec3 getVelocity();
 
     glm::vec3 scale = glm::vec3(1.0f);
+    float angleDegs = 0.0f;
+    float angleVelocityDegs = 0.0f;
 
     bool moveable = true;
+    uint bounceAxis = 0;
 
     Mesh * mesh;
     AABB * aabb;
     glm::mat4 modelMatrix = glm::mat4(1.0f);
+    glm::mat4 modelMatrixNoRotation = glm::mat4(1.0f);
 
     Model(  std::string name,
             Mesh* mesh,
