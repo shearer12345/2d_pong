@@ -5,12 +5,14 @@
 
 Model::Model(std::string name,
              Mesh * mesh,
+             Texture* texture,
              glm::vec3 position,
              glm::vec3 velocity,
              bool moveable)
              : // initializer list follows
              name(name),
              mesh(mesh),
+             texture(texture),
              aabb(new AABB(mesh)),
              position(position),
              _velocity(velocity),

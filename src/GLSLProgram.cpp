@@ -39,6 +39,7 @@ GLSLProgram::GLSLProgram(std::string newVertexShaderPath,
 	modelMatrixLocation = glGetUniformLocation(programID, "modelMatrix");
 	viewMatrixLocation = glGetUniformLocation(programID, "viewMatrix");
 	projectionMatrixLocation = glGetUniformLocation(programID, "projectionMatrix");
+  textureSamplerLocation  = glGetUniformLocation(programID, "textureSampler");
 
 	//error handling
 	SDL_assert_release( modelMatrixLocation != -1);

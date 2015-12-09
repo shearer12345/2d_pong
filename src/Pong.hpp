@@ -4,6 +4,7 @@
 
 #include "GLSLProgram.hpp"
 
+#include "Texture.hpp"
 #include "Mesh.hpp"
 #include "Triangle.hpp"
 #include "Quad.hpp"
@@ -24,6 +25,7 @@ public:
     TrackingOrthoCamera * trackingCamera = nullptr;
     Camera * camera = orthoCamera;
 
+    Texture* texture = nullptr;
     Mesh* quad = nullptr;
     Mesh * triangle = nullptr;
 
