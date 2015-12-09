@@ -14,8 +14,10 @@ public:
 	GLuint programID;
 
 	//attribute locations
-	GLint vertexPositionLocation = -1; //GLuint that we'll fill in with the location of the `position` attribute in the GLSL
-	GLint vertexColorLocation = -1; //GLuint that we'll fill in with the location of the `vertexColor` attribute in the GLSL
+	GLint vertexPositionLocation = -1;
+	GLint vertexColorLocation = -1;
+	GLint vertexUVLocation = -1;
+
 
 	//uniform location
 	GLint modelMatrixLocation = -1;

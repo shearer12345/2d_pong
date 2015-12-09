@@ -27,10 +27,12 @@ GLSLProgram::GLSLProgram(std::string newVertexShaderPath,
 	// tag::glGetAttribLocation[]
 	vertexPositionLocation = glGetAttribLocation(programID, "vertexPosition");
 	vertexColorLocation = glGetAttribLocation(programID, "vertexColor");
+  vertexUVLocation =  glGetAttribLocation(programID, "vertexUV");
 
 	//error handling
 	SDL_assert_release( vertexPositionLocation != -1);
-	SDL_assert_release( vertexColorLocation != -1);
+  //SDL_assert_release( vertexColorLocation != -1);
+  SDL_assert_release( vertexUVLocation != -1);
 	// end::glGetAttribLocation[]
 
 	// tag::glGetUniformLocation[]

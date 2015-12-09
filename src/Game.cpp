@@ -23,7 +23,7 @@ Game::Game(std::string windowName)
 	#ifdef NDEBUG
 		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
 	#else
-		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
 	#endif
 
 	// error handling

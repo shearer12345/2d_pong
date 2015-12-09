@@ -43,13 +43,18 @@ void Mesh::setupVertexArrayObject()
 
 			glEnableVertexAttribArray(glslProgram->vertexPositionLocation);
 			glEnableVertexAttribArray(glslProgram->vertexColorLocation);
+      glEnableVertexAttribArray(glslProgram->vertexUVLocation);
+
 
 			// tag::glVertexAttribPointer[]
 			SDL_assert((sizeof(Vertex().position) %  alignof(Vertex)) == 0); //check will align without padding
 			SDL_assert((sizeof(Vertex().color) %  alignof(Vertex)) == 0); //check will align without padding
+      SDL_assert((sizeof(Vertex().uv) %  alignof(Vertex)) == 0); //check will align without padding
+
 
 			glVertexAttribPointer(glslProgram->vertexPositionLocation,    3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) 0);
 			glVertexAttribPointer(glslProgram->vertexColorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) sizeof(Vertex().position));
+      glVertexAttribPointer(glslProgram->vertexUVLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) (sizeof(Vertex().position) + sizeof(Vertex().color)));
 			// end::glVertexAttribPointer[]
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

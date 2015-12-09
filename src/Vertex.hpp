@@ -7,12 +7,11 @@ class Vertex
 public:
 	glm::vec3 position;
 	glm::vec4 color;
+	glm::vec2 uv;
 
 	Vertex();
 
-	Vertex(glm::vec3 pos, glm::vec4 col)
-	{
-		position = pos;
-		color = col;
-	};
+	Vertex(glm::vec3 position, glm::vec4 color, glm::vec2 uv) :
+		position(position), color(color), uv(uv)
+		{};
 };
