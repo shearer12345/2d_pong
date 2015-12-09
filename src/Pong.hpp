@@ -8,6 +8,7 @@
 #include "Mesh.hpp"
 #include "Triangle.hpp"
 #include "Quad.hpp"
+#include "Circle.hpp"
 
 #include "Model.hpp"
 #include "AABB.hpp"
@@ -25,7 +26,7 @@ public:
     TrackingOrthoCamera * trackingCamera = nullptr;
     Camera * camera = orthoCamera;
 
-    Texture* texture = nullptr;
+    Texture* textureOpenGL = nullptr;
     Mesh* quad = nullptr;
     Mesh * triangle = nullptr;
 

@@ -57,7 +57,7 @@ Game::~Game()
 void Game::createWindow()
 {
 	//create window
-	sdl_windowPtr = SDL_CreateWindow(windowName.c_str(), 100, 600, 600, 600, SDL_WINDOW_OPENGL); //same height and width makes the window square ...
+	sdl_windowPtr = SDL_CreateWindow(windowName.c_str(), 100, 100, 600, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); //same height and width makes the window square ...
 
 	//error handling
 	if(sdl_windowPtr == nullptr)
@@ -181,7 +181,10 @@ void Game::updateSimulation(double simLength) //update simulation with an amount
 void Game::preRender()
 {
 	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_VERBOSE, "preRender");
-	glViewport(0, 0, 600, 600); //set viewpoint
+	int w = 600, h = 600;
+
+	SDL_GetWindowSize(sdl_windowPtr, &w, &h);
+	glViewport(0, 0, w, h); //set viewpoint
 	glClearColor(0.5f, 0.0f, 0.0f, 1.0f); //set clear colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the window (technical the scissor box bounds)
 }

@@ -6,49 +6,50 @@ Pong::Pong(std::string windowName)
 {
 	glslProgram = new GLSLProgram();
 
-	texture = new Texture("assets/textures/Opengl-logo.svg.png");
+	textureOpenGL = new Texture("assets/textures/Opengl-logo.svg.png");
 
 	quad = new Quad(glslProgram);
 
 	triangle = new Triangle(glslProgram);
 
+	Mesh * circle = new Circle(glslProgram, 1000);
 
-	batLeft = new Model("batLeft", quad, texture, glm::vec3(-80.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	batLeft = new Model("batLeft", quad, textureOpenGL, glm::vec3(-80.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	batLeft->scale = (glm::vec3(2.0f, 10.0f, 1.0f));
 	modelList.push_back(batLeft);
 
-	batRight = new Model("batRight", quad, texture, glm::vec3(80.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	batRight = new Model("batRight", quad, textureOpenGL, glm::vec3(80.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	batRight->scale = (glm::vec3(2.0f, 10.0f, 1.0f));
 	modelList.push_back(batRight);
 
 
-	wallLeft = new Model("wallLeft", quad, texture, glm::vec3(-100.00f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	wallLeft = new Model("wallLeft", quad, textureOpenGL, glm::vec3(-97.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
 	wallLeft->scale = (glm::vec3(5.0f, 100.0f, 1.0f));
 	modelList.push_back(wallLeft);
 
-	wallRight = new Model("wallRight", quad, texture, glm::vec3(100.00f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	wallRight = new Model("wallRight", quad, textureOpenGL, glm::vec3(97.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
 	wallRight->scale = (glm::vec3(5.0f, 100.0f, 1.0f));
 	modelList.push_back(wallRight);
 
-	Model* wallTop = new Model("wallTop", quad, texture, glm::vec3(0.00f, 100.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	Model* wallTop = new Model("wallTop", quad, textureOpenGL, glm::vec3(0.00f, 97.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
 	wallTop->scale = (glm::vec3(100.0f, 5.0f, 1.0f));
 	wallTop->bounceAxis = 1;
 	modelList.push_back(wallTop);
 
-	Model* wallBottom = new Model("wallBottom", quad, texture, glm::vec3(0.00f, -100.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
+	Model* wallBottom = new Model("wallBottom", quad, textureOpenGL, glm::vec3(0.00f, -97.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
 	wallBottom->scale = (glm::vec3(100.0f, 5.0f, 1.0f));
 	wallBottom->bounceAxis = 1;
 	modelList.push_back(wallBottom);
 
 
-	ball = new Model("ball", triangle, texture, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-50.0f, 20.0f, 0.0f));
-	ball->scale = (glm::vec3(15.0f, 15.0f, 1.0f));
+	ball = new Model("ball", circle, textureOpenGL, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-50.0f, 20.0f, 0.0f));
+	ball->scale = (glm::vec3(5.0f, 5.0f, 1.0f));
 	ball->angleVelocityDegs = 55.0f;
 	modelList.push_back(ball);
 
 	glm::vec3* tmp = new glm::vec3(1.0f, 1.0f, 0.0f);
-	trackingCamera = new TrackingOrthoCamera(glslProgram, ball, glm::vec2(200.0f));
-	orthoCamera = new OrthoCamera(glslProgram, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(200.0f));
+	trackingCamera = new TrackingOrthoCamera(glslProgram, ball, glm::vec2(220.0f));
+	orthoCamera = new OrthoCamera(glslProgram, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(220.0f));
 	camera = orthoCamera;
 }
 
@@ -90,8 +91,8 @@ void Pong::incrementScore(int player)
 	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "  incrementScore for player %d", player);
 
 	GLfloat direction = (player == 0) ? -1.0f : 1.0f;
-	Model * scoreMarker = new Model("scoreMarker", triangle, texture, glm::vec3(direction * 8 * (9 - score[player]), -80.0f, 0.0f), glm::vec3(0.0f, 20.0f, 0.0f), false);
-	scoreMarker->scale = (glm::vec3(5.0f, 5.0f, 1.0f));
+	Model * scoreMarker = new Model("scoreMarker", triangle, textureOpenGL, glm::vec3(direction * 8 * (9 - score[player]), -80.0f, 0.0f), glm::vec3(0.0f, 20.0f, 0.0f), false);
+	scoreMarker->scale = (glm::vec3(15.0f, 15.0f, 1.0f));
 	scoreMarker->angleVelocityDegs = 95.0f;
 	scoreMarkerList.push_back(scoreMarker);
 
@@ -252,6 +253,13 @@ void Pong::handleInput()
 					}
 					break;
 
+					case SDLK_v:
+					{
+						SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "V key pressed");
+						camera = (camera == orthoCamera) ? trackingCamera : orthoCamera;
+
+					}
+					break;
 					// some very bad key handling
 					case SDLK_w:
 					{

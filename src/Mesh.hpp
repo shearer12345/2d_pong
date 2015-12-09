@@ -14,7 +14,7 @@ public:
 
     GLSLProgram* glslProgram = nullptr;
 
-    Mesh(GLSLProgram* glslProgram, std::vector<Vertex> vertexData);
+    Mesh(GLSLProgram* glslProgram, std::vector<Vertex> vertexData = {});
 
     void draw(GLenum mode = GL_TRIANGLES);
     void bufferData(std::vector<Vertex> newVertexData = {});
