@@ -76,7 +76,6 @@ GLuint GLSLProgram::createShader(GLenum eShaderType, const std::string &strShade
 	//error handling
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-	SDL_assert_release(status != GL_FALSE);
 	if (status == GL_FALSE)
 	{
 		GLint infoLogLength;
@@ -96,6 +95,7 @@ GLuint GLSLProgram::createShader(GLenum eShaderType, const std::string &strShade
 		delete[] strInfoLog;
 		SDL_Quit();
 	}
+  SDL_assert_release(status != GL_FALSE);
 
 	SDL_LogMessage(SDL_LOG_CATEGORY_RENDER, SDL_LOG_PRIORITY_DEBUG, "GLSL Shader created with ID %i", shader);
 	return shader;

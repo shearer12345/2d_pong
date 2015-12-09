@@ -42,6 +42,11 @@ void Model::draw()
     updateModelMatrix();
     glUniformMatrix4fv(mesh->glslProgram->modelMatrixLocation, 1, false, glm::value_ptr(modelMatrix));
 
+    glUniform1i(mesh->glslProgram->textureSamplerLocation, 0); //make texture unit 0 feed our textureSampler
+    glActiveTexture(GL_TEXTURE0); //make texture unit 0 the active texture unit (which texture unit subsequent texture state calls will	affect)
+
+    glBindTexture(GL_TEXTURE_2D, texture->textureID); //make our texture object feed the active texture unit
+
     mesh->draw();
 }
 
