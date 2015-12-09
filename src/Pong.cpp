@@ -24,20 +24,20 @@ Pong::Pong(std::string windowName)
 
 
 	wallLeft = new Model("wallLeft", quad, textureOpenGL, glm::vec3(-97.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	wallLeft->scale = (glm::vec3(5.0f, 100.0f, 1.0f));
+	wallLeft->scale = (glm::vec3(5.0f, 97.5f, 1.0f));
 	modelList.push_back(wallLeft);
 
 	wallRight = new Model("wallRight", quad, textureOpenGL, glm::vec3(97.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	wallRight->scale = (glm::vec3(5.0f, 100.0f, 1.0f));
+	wallRight->scale = (glm::vec3(5.0f, 97.5f, 1.0f));
 	modelList.push_back(wallRight);
 
 	Model* wallTop = new Model("wallTop", quad, textureOpenGL, glm::vec3(0.00f, 97.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	wallTop->scale = (glm::vec3(100.0f, 5.0f, 1.0f));
+	wallTop->scale = (glm::vec3(102.5f, 5.0f, 1.0f));
 	wallTop->bounceAxis = 1;
 	modelList.push_back(wallTop);
 
 	Model* wallBottom = new Model("wallBottom", quad, textureOpenGL, glm::vec3(0.00f, -97.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), false);
-	wallBottom->scale = (glm::vec3(100.0f, 5.0f, 1.0f));
+	wallBottom->scale = (glm::vec3(102.5f, 5.0f, 1.0f));
 	wallBottom->bounceAxis = 1;
 	modelList.push_back(wallBottom);
 
