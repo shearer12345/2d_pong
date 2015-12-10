@@ -23,7 +23,7 @@ public:
     float angleVelocityDegs = 0.0f;
 
     bool moveable = true;
-    uint bounceAxis = 0;
+    unsigned int bounceAxis = 0;
 
     Mesh * mesh;
     AABB * aabb;

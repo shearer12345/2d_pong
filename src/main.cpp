@@ -11,6 +11,7 @@
 #include "Pong.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 // tag::main[]
 int main( int argc, char* args[] )
@@ -36,5 +37,5 @@ int main( int argc, char* args[] )
 		pong.run();
 	}
 
-
+	return 0;
 }
