@@ -32,6 +32,7 @@ solution "2D Pong"
        configuration "windows"
        includedirs {
                      "./graphics_dependencies/SDL2/include",
+                     "./graphics_dependencies/SDL2/include/SDL2",
                      "./graphics_dependencies/glew/include",
                      "./graphics_dependencies/glm",
                      "./graphics_dependencies/SDL2_image/include",
@@ -90,12 +91,11 @@ solution "2D Pong"
        end
        -- end::copyAssets
 
-
-       -- copy dlls on windows
+	   -- copy dlls on windows
        -- tag::windowsDLLCopy[]
        if os.get() == "windows" then
           os.copyfile("./graphics_dependencies/glew/bin/Release/Win32/glew32.dll", path.join(projectBuildPath, "glew32.dll"))
-          os.copyfile("./graphics_dependencies/SDL2/lib/win32/SDL2.dll", path.join(projectName, "SDL2.dll"))
+          os.copyfile("./graphics_dependencies/SDL2/lib/win32/SDL2.dll", path.join(projectBuildPath, "SDL2.dll"))
           os.copyfile("./graphics_dependencies/SDL2_image/lib/x86/SDL2_image.dll", path.join(projectBuildPath, "SDL2_image.dll"))
           os.copyfile("./graphics_dependencies/SDL2_image/lib/x86/libjpeg-9.dll", path.join(projectBuildPath, "libjpeg-9.dll"))
           os.copyfile("./graphics_dependencies/SDL2_image/lib/x86/libpng16-16.dll", path.join(projectBuildPath, "libpng16-16.dll"))
