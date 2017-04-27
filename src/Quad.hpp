@@ -1,9 +1,7 @@
 #pragma once
 #include "Mesh.hpp"
 
-class Quad : public Mesh
-{
+class Quad : public Mesh {
 public:
-    Quad(GLSLProgram* glslProgram);
-
+  Quad(GLSLProgram *glslProgram);
 };

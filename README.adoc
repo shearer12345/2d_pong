@@ -1,0 +1,44 @@
+= Space Invaders 2D
+
+A simple Space Invaders sample using OpenGL in modern C++, using SDL2 for cross-platform support
+
+* Uses https://conan.io[conan.io] to obtain and setup libraries
+* Uses https://cmake.org[CMake] for build system creation
+
+== Quickstart
+
+Windows:: `auto.bat` #or double-click
+Linux:: `./auto.sh`
+
+== Manual start
+
+From a command line, at the root of this project
+
+1. Make a directory for temporary build files
+  * `mkdir build`
+2. Change into that directory
+  * `cd build`
+3. Ask conan to install libraries, according to `conanfile.txt`
+  * `conan install .. --build missing`
+4. Ask CMake to make a build system (build files will be in `build` folder. `.sln` file for Visual Studio)
+  * Windows
+    ** `cmake .. -G "Visual Studio 14 2015 Win64"`
+  * Linux
+    ** `cmake .. -G "Unix Makefiles`
+  * Any (auto select build system)
+    ** `cmake ..`
+5. Do the build
+  * Visual Studio, manually
+    ** open the `.sln` file and hit *build*
+  * Ask CMake to ask the build system to build (OPTIONAL)
+    ** `cmake --build . --config Debug`
+6. Return to parent directory
+  * `cd ..`
+
+== Other resources
+
+CMake and Visual Studio :: https://cognitivewaves.wordpress.com/cmake-and-visual-studio/
+
+== Licensing
+
+* this template is MIT licensed (see link:LICENSE[LICENSE])
